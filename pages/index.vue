@@ -1,17 +1,28 @@
 <template>
   <v-container fluid>
     <v-card>
-      {{ items }}
+      <v-textarea v-model="str" />
+    </v-card>
+    <v-card>
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <v-card-text v-html="$md.render(str)" />
     </v-card>
   </v-container>
 </template>
 
 <script>
+import readMe from './README.md'
 
 export default {
   data () {
     return {
-      items: []
+      items: [],
+      str: ''
+    }
+  },
+  computed: {
+    hello () {
+      return readMe
     }
   },
   async mounted () {
