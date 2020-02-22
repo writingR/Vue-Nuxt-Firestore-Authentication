@@ -53,14 +53,6 @@ export default {
       'nuxt-fire',
       {
         config: {
-          // apiKey: 'AIzaSyAeVrGLdsy0-OZSNyj2P4xt6kWB6tXHtus',
-          // authDomain: 'nuxt-blog-t.firebaseapp.com',
-          // databaseURL: 'https://nuxt-blog-t.firebaseio.com',
-          // projectId: 'nuxt-blog-t',
-          // storageBucket: 'nuxt-blog-t.appspot.com',
-          // messagingSenderId: '57865596648',
-          // appId: '1:57865596648:web:59dc76f1188da9766fe35d',
-          // measurementId: 'G-P2069HGR23'
           apiKey: configKey.apiKey,
           authDomain: configKey.authDomain,
           databaseURL: configKey.databaseURL,
