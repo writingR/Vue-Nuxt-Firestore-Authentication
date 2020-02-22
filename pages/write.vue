@@ -47,7 +47,15 @@ export default {
     }
   },
   methods: {
-    async save () {
+    initialValue () {
+      this.category = ''
+      this.name = ''
+      this.title = ''
+      this.date = ''
+      this.description = ''
+      this.text = ''
+    },
+    async save () { 
       try {
         const id = this.docId.category + '-' + this.docId.name
         this.doc.createAt = new Date()
@@ -58,11 +66,13 @@ export default {
         this.content.modifiedAt = new Date()
         await this.$fireStore.collection('docs').doc(cid).set(this.content)
         await alert('데이터를 정상적으로 등록하였습니다.')
+        location.reload()
       } catch (err) {
         console.log('faile to database register', err);
         alert('등록에 실패하였습니다.')
       }
     }
+    
   }
 }
 </script>

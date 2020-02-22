@@ -91,3 +91,6 @@ sw.*
 
 # config key
 key/
+
+# etc
+.eslintrc.js
