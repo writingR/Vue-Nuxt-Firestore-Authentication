@@ -13,5 +13,10 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-trailing-spaces': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'semi': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'padded-blocks': process.env.NODE_ENV === 'production' ? 'error' : 'off',
   }
 }

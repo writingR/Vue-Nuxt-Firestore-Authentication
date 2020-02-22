@@ -52,16 +52,7 @@ export default {
     [
       'nuxt-fire',
       {
-        config: {
-          apiKey: configKey.apiKey,
-          authDomain: configKey.authDomain,
-          databaseURL: configKey.databaseURL,
-          projectId: configKey.projectId,
-          storageBucket: configKey.storageBucket,
-          messagingSenderId: configKey.messagingSenderId,
-          appId: configKey.appId,
-          measurementId: configKey.measurementId
-        },
+        config: configKey,
         services: {
           auth: true, // Just as example. Can be any other service.
           firestore: true
