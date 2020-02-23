@@ -2,20 +2,17 @@
   <v-container fluid>
     <v-card>
       <v-toolbar color="success" dark flat>
-        <v-toolbar-title>list</v-toolbar-title>
+        <v-toolbar-title>list {{ items.length }}</v-toolbar-title>
         <v-spacer />
         <v-sheet width="90" color="transparent">
           <v-select v-model="sortName" :items="['date','title']" hide-details solo-inverted flat />
         </v-sheet>
-        <v-btn icon @click="listItems">
-          <v-icon>mdi-refresh</v-icon>
-        </v-btn>
       </v-toolbar>
       <v-card-text>
         <template v-for="(item, index) in items">
           <v-list-item :key="item.key" three-line>
             <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-title>{{ '#' + index + ' - ' + item.title }}</v-list-item-title>
               <v-list-item-subtitle>{{ item.description }}</v-list-item-subtitle>
               <v-list-item-subtitle>{{ item.name }}</v-list-item-subtitle>
               <v-list-item-subtitle>{{ item.date }}</v-list-item-subtitle>
@@ -31,11 +28,8 @@
           <v-divider :key="index" />
         </template>
       </v-card-text>
-      <v-card-actions>
-        <v-btn @click="pre">
-          pre
-        </v-btn>
-        <v-btn @click="nextListItems">
+      <v-card-actions v-intersect="onIntersect">
+        <v-btn :loading="loading" @click="nextListItems">
           next
         </v-btn>
       </v-card-actions>
@@ -44,12 +38,15 @@
 </template>
 
 <script>
+// import delay from 'delay'
+
 export default {
   data () {
     return {
       items: [],
       lastPage: null,
-      sortName: 'date'
+      sortName: 'date',
+      loading: false
     }
   },
   watch: {
@@ -58,41 +55,49 @@ export default {
     }
   },
   mounted () {
-    this.listItems()
   },
   methods: {
-    async listItems () {
-      this.items = []
-      const snapShot = await this.$fireStore.collection('docs').orderBy(this.sortName, 'desc').limit(3).get()
-      snapShot.docs.forEach((v) => {
-        const item = v.data()
-        item.key = v.id
-        item.category = v.id.split('-')[0]
-        item.name = v.id.split('-')[1]
-        // eslint-disable-next-line no-undef
-        this.items.push(item)
-      })
-      this.lastPage = snapShot.docs[snapShot.docs.length - 1]
-    },
-    async nextListItems () {
-      const snapShot = await this.$fireStore.collection('docs').orderBy(this.sortName, 'desc').startAfter(this.lastPage).limit(3).get()
-      snapShot.docs.forEach((v) => {
-        const item = v.data()
-        item.key = v.id
-        item.category = v.id.split('-')[0]
-        item.name = v.id.split('-')[1]
-        // eslint-disable-next-line no-undef
-        this.items.push(item)
-      })
-      this.lastPage = snapShot.docs[snapShot.docs.length - 1]
+    async nextListItems (entries, observer, isIntersecting) {
+      // eslint-disable-next-line no-unused-vars
+      let snapShot
+      const ref = this.$fireStore.collection('docs')
+        .orderBy(this.sortName, 'desc')
+        .limit(6)
+      this.loading = true
+      try {
+        if (!this.items.length) {
+          snapShot = await ref.get()
+        } else { 
+          if (!this.lastPage) { return }
+          snapShot = await ref.startAfter(this.lastPage).get()     
+        }
+        snapShot.docs.forEach((v) => {
+          const item = v.data()
+          item.key = v.id
+          item.category = v.id.split('-')[0]
+          item.name = v.id.split('-')[1]
+          // eslint-disable-next-line no-undef
+          this.items.push(item)
+        })
+        this.lastPage = snapShot.docs[snapShot.docs.length - 1]
+      } catch (err) {
+        console.log("error", err);
+      } finally {
+        this.loading = false
+      }
+      
     },
     async pre () {
       await location.reload()
+    },
+    onIntersect (entries, observer, isIntersecting) {
+      if (isIntersecting) {
+        this.nextListItems()
+      }
     }
   }
 }
 </script>
 
 <style>
-
 </style>
